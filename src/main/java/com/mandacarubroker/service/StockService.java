@@ -3,7 +3,13 @@ package com.mandacarubroker.service;
 import com.mandacarubroker.domain.stock.RequestStockDTO;
 import com.mandacarubroker.domain.stock.Stock;
 import com.mandacarubroker.domain.stock.StockRepository;
-import jakarta.validation.*;
+
+import jakarta.validation.ValidatorFactory;
+import jakarta.validation.Validation;
+import jakarta.validation.Validator;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.ConstraintViolationException;
+
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -12,7 +18,6 @@ import java.util.Set;
 
 @Service
 public class StockService {
-
 
     private final StockRepository stockRepository;
 
@@ -34,16 +39,19 @@ public class StockService {
         return stockRepository.save(novaAcao);
     }
 
-    public Optional<Stock> updateStock(String id, Stock updatedStock) {
-        return stockRepository.findById(id)
-                .map(stock -> {
-                    stock.setSymbol(updatedStock.getSymbol());
-                    stock.setCompanyName(updatedStock.getCompanyName());
-                    double newPrice = stock.changePrice(updatedStock.getPrice(), true);
-                    stock.setPrice(newPrice);
+    public Stock updateStock(String id, Stock updatedStock) {
+        Optional<Stock> optionalStock = stockRepository.findById(id);
 
-                    return stockRepository.save(stock);
-                });
+        if (optionalStock.isPresent()) {
+            Stock stock = optionalStock.get();
+            stock.setSymbol(updatedStock.getSymbol());
+            stock.setCompanyName(updatedStock.getCompanyName());
+            stock.setPrice(updatedStock.getPrice());
+
+            return stockRepository.save(stock);
+        } else {
+            return null; // Ou você pode lançar uma exceção indicando que a ação não foi encontrada.
+        }
     }
 
     public void deleteStock(String id) {

@@ -1,6 +1,6 @@
-CREATE TABLE stock(
-                      id VARCHAR PRIMARY KEY,
-                      symbol VARCHAR NOT NULL,
-                      company_name VARCHAR NOT NULL,
-                      price FLOAT NOT NULL
+CREATE TABLE stock (
+                       id varchar(255) primary key,
+                       symbol varchar(255) not null,
+                       company_name varchar(255) not null,
+                       price float not null
 );
